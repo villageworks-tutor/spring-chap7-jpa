@@ -17,7 +17,22 @@ public class Item {
 	private Integer categoryId;
 	private String name;
 	private Integer price;
-	
+
+	/**
+	 * デフォルトコンストラクタ
+	 */
+	public Item() {}
+	/**
+	 * コンストラクタ
+	 * @param categoryId
+	 * @param name
+	 * @param price
+	 */
+	public Item(Integer categoryId, String name, Integer price) {
+		this.categoryId = categoryId;
+		this.name = name;
+		this.price = price;
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -25,7 +40,7 @@ public class Item {
 		return categoryId;
 	}
 	public String getName() {
-		return name;
+		return name;	
 	}
 	public Integer getPrice() {
 		return price;

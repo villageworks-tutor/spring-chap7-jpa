@@ -1,0 +1,57 @@
+@startuml 商品登録
+' skinparam Style strictuml
+' autonumber "0. "
+actor Client
+participant ItemController as itemController
+participant Model as model
+participant ItemRepository as itemRepository
+'participant List as itemList
+participant Item as item
+database spring_sample as db
+
+mainframe 商品登録
+== 新規登録画面表示 ==
+||10||
+Client -> itemController: [GET] /items/add
+note right
+	コードでは ItemController#create() メソッドが呼び出される
+end note
+autonumber "0. "
+||10||
+return [view] addItem
+||10||
+== 新規登録処理 ==
+||10||
+autonumber stop
+Client -> itemController: [POST] /items/add
+note right
+	コードでは ItemController#store(Item) メソッドが呼び出される
+end note
+autonumber "0. "
+||10||
+itemController -> itemRepository: @Autowired
+autonumber stop
+itemController <-- itemRepository: itemRepository
+autonumber resume
+||10||
+itemController -> item: new Item(categoryId, name, price)
+autonumber stop
+itemController <-- item: item
+autonumber resume
+||10||
+itemController -> itemRepository: save(item)
+||20||
+group springフレームワーク
+	||10||
+	autonumber stop
+	itemRepository -> db: INSERT INTO items (category_id, name, price) VALUES (?, ?, ?) 
+	||10||
+end
+||20||
+autonumber resume
+Client <-- itemController: [view] /items
+note right
+	商品一覧表示のためにリダイレクトする
+end note
+||10||
+@enduml
