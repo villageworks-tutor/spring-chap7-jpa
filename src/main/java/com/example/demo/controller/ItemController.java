@@ -7,7 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.example.demo.entity.Category;
 import com.example.demo.entity.Item;
+import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.ItemRepository;
 
 
@@ -16,6 +18,8 @@ public class ItemController {
 	
 	@Autowired // seq.1
 	ItemRepository itemRepository;
+	@Autowired // seq.2
+	CategoryRepository categoryRepository;
 	
 	// 商品一覧表示
 	@GetMapping("/")
@@ -30,7 +34,11 @@ public class ItemController {
 	
 	// カテゴリーによる絞り込み
 	@GetMapping("/items")
-	public String items() {
+	public String items(Model model) {
+		// すべてのカテゴリーのカテゴリーリストを取得
+		List<Category> categoryList = categoryRepository.findAll();
+		// 取得したカテゴリーリストをスコープに登録
+		model.addAttribute("categoryList", categoryList);
 		// 画面遷移
 		return "items";
 	}
