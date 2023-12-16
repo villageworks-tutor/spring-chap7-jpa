@@ -1,0 +1,54 @@
+@startuml 商品一覧表示
+' skinparam Style strictuml
+' autonumber "0. "
+actor Client
+participant ItemController as itemController
+participant Model as model
+participant ItemRepository as itemRepository
+participant List as itemList
+participant Item as item
+database spring_sample as db
+
+mainframe 商品一覧表示
+
+||20||
+Client -> itemController: [GET] /
+note right
+	コードでは ItemController#index() メソッドが呼び出される
+end note
+autonumber "0. "
+||20||
+itemController -> itemRepository: @Autowired
+autonumber stop
+itemController <-- itemRepository: itemRepository
+autonumber resume
+||20||
+itemController -> itemRepository: findAll()
+
+|||
+autonumber stop
+group springフレームワーク内
+	||10||
+	itemRepository -> db: SELECT * FROM items
+	return ResultSet
+
+	itemRepository -> itemList: new Item(id, categoryId, name, price)
+	return itemList
+
+	loop 取得した要素数だけ繰り返す
+		itemRepository -> item: new Item(id, categoryId, name, price)
+		return item
+		itemRepository -> itemList: add(item)
+	end
+	||10||
+end
+|||
+
+itemController <-- itemRepository: itemList
+||20||
+autonumber resume
+itemController -> model: addAttribute("itemList", itemList)
+||20||
+Client <-- itemController: [view] items
+
+@enduml
