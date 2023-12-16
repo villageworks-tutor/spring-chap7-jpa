@@ -1,0 +1,51 @@
+@startuml クラス図
+
+remove ItemRepository
+'remove ItemController
+remove Item
+remove Category
+remove Model
+
+class ItemController <<controller>> {
+	- itemRepository: ItemRepository
+	+ index(categoryId = null: Integer): String
+}
+
+class Item <<entity>> {
+	- id: Integer
+	- categoryId: Integer
+	- mame: String
+	- price: Integer
+	+ Item(id: Integer, categoryId: Integer, name: String, price: Integer)
+	+ Item(categoryId: Integer, name: String, price: Integer)
+	+ getId(): Integer
+	+ setId(id: Integer): void
+	+ getCategoryId(): Integer
+	+ setCategoryId(categoryId: Integer): void
+ 	+ getName(): String
+	+ setName(name: String): void
+	+ getPrice(): Integer
+	+ setPrice(price: Integer): void
+}
+
+class Category <<entity>> {
+	- id: Integer
+	- name: String
+	+ Category(id: Integer, name: String)
+	+ Category(name: String)
+	+ getId(): Integer
+	+ setId(id: Integer): void
+ 	+ getName(): String
+	+ setName(name: String): void
+}
+
+Interface Model <<thymeleaf>> {
+	+ addAttribute(name: String, target: Object)
+}
+
+interface ItemRepository <<repository>> {
+	+ findAll(): List<Item>
+	+ save(item: Item): void
+}
+
+@enduml
