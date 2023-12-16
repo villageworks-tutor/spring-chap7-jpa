@@ -1,0 +1,22 @@
+@startuml spring_sample.erd
+
+' カテゴリーテーブル
+entity categories {
+  * id SERIAL PRIMARY KEY
+  --
+  * name TEXT
+}
+
+' 商品テーブル
+entity items {
+  * id SERIAL PRIMARY KEY
+  --
+  * category_id Integer <<FK>>
+  * name TEXT
+  * price Integer
+}
+
+' テーブル間の関連
+categories ||..o{ items
+
+@enduml
