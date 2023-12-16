@@ -28,4 +28,11 @@ public class ItemController {
 		return "items";
 	}
 	
+	// カテゴリーによる絞り込み
+	@GetMapping("/items")
+	public String items() {
+		// 画面遷移
+		return "items";
+	}
+	
 }
