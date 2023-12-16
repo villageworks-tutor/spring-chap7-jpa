@@ -62,14 +62,21 @@ public class ItemController {
 	// 新規登録画面表示
 	@GetMapping("/items/add")
 	public String create() {
-		// 画面遷移
+		// 画面遷移 seq.1
 		return "addItem";
 	}
 	
 	// 新規登録処理
 	@PostMapping("/items/add")
-	public String store() {
-		// 画面遷移
+	public String store(
+			@RequestParam(name = "categoryId", defaultValue = "") Integer categoryId,
+			@RequestParam(name = "name", defaultValue = "") String name,
+			@RequestParam(name = "price", defaultValue = "") Integer price) {
+		// リクエストパラメータをもとに登録する商品をインスタンス化 seq.2
+		Item item = new Item(categoryId, name, price);
+		// 生成した商品インスタンスを永続化 seq.3
+		itemRepository.save(item);
+		// 画面遷移 seq.4
 		return "redirect:/items";
 	}
 	
