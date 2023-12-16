@@ -1,0 +1,116 @@
+@startuml カテゴリーによる絞り込み
+' skinparam Style strictuml
+' autonumber "0. "
+
+participant Client
+participant ItemController as itemController
+participant Model as model
+participant CategoryRepository as categoryRepository
+participant ItemRepository as itemRepository
+participant List as list
+participant Category as category
+participant Item as item
+database spring_sample as db
+
+mainframe カテゴリーによる絞り込み
+
+||20||
+Client -> itemController: [GET] /items?categoryId=1
+note right
+	コードでは ItemController#items(@RequestParam: categoryId=null) メソッドが呼び出される
+end note
+autonumber "0. "
+
+||20||
+itemController -> categoryRepository: @Autowired
+itemController -> itemRepository: @Autowired
+||20||
+
+' カテゴリーリストの取得
+itemController -> categoryRepository: findAll()
+|||
+autonumber stop
+group springフレームワーク
+	||10||
+	categoryRepository -> db: SELECT * FROM categories
+	categoryRepository <-- db: ResultSet
+	categoryRepository -> list: new ArrayList<Category>
+	categoryRepository <-- list: categoryList
+	loop カテゴリーの件数分繰り返し
+		||10||
+		categoryRepository -> category: new Category(id, name)
+		categoryRepository <-- category: category
+		categoryRepository -> list: add(category)
+		||10||
+	end
+	||10||
+end
+||10||
+itemController <-- categoryRepository: categoryList
+||20||
+autonumber resume
+itemController -> model: addAttrubute("categoryList", categoryList)
+||20||
+
+' 商品リストの取得
+||40||
+autonumber stop
+autonumber 5.1
+alt カテゴリーIDが未送信の場合：categoryId = null
+	||10||
+	itemController -> itemRepository: findByAll()
+	||10||
+	autonumber stop
+	group springフレームワーク
+		||5||
+		itemRepository -> db: SELECT * FROM items
+		itemRepository <-- db: ResultSet
+
+		itemRepository -> list: new ArrayLIst<Item>
+		itemRepository <-- list: itemList
+		||5||
+		loop 商品リストの件数分繰り返し
+			||5||
+			itemRepository -> item: new Item(id, categoryId, name, price)
+			itemRepository <-- item: item
+			itemRepository -> list: add(item)
+			||5||
+		end
+		||10||
+	end
+	||20||
+else カテゴリーIDが送信される場合：categoryId != null
+	||10||
+	autonumber resume
+	itemController -> itemRepository: findByCategoryId(categoryId)
+	||10||
+	autonumber stop
+	group springフレームワーク
+		||10||
+		itemRepository -> db: SELECT * FROM items WHERE category_id = ?
+		itemRepository <-- db: ResultSet
+
+		itemRepository -> list: new ArrayLIst<Item>
+		itemRepository <-- list: itemList
+		||5||
+		loop 商品リストの件数分繰り返し
+			||5||
+			itemRepository -> item: new Item(id, categoryId, name, price)
+			itemRepository <-- item: item
+			itemRepository -> list: add(item)
+			||5||
+		end
+		||10||
+	end
+	||20||
+end
+||10||
+itemController <-- itemRepository: itemList
+||20||
+autonumber 6
+itemController -> model: addAttribute("itemList", itemList)
+||20||
+Client <-- itemController: [view] items
+||20||
+
+@enduml
