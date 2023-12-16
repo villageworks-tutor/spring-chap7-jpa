@@ -1,0 +1,19 @@
+@startuml 各クラス間の関連図
+
+class ItemController <<controller>>
+interface ItemRepository <<repository>>
+class List<Item>
+class Item <<entity>>
+interface Model <<thymeleaf>>
+
+ItemController - ItemRepository: @Autowired
+ItemController -- Model
+ItemController -- Item
+ItemRepository -- Item
+Model - Item
+remove List
+'ItemController -- List
+'ItemRepository -- List
+'Model - List
+'List o- Item : aggregation
+@enduml
