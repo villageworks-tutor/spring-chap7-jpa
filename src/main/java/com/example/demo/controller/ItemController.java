@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.entity.Category;
 import com.example.demo.entity.Item;
@@ -34,12 +35,25 @@ public class ItemController {
 	
 	// カテゴリーによる絞り込み
 	@GetMapping("/items")
-	public String items(Model model) {
-		// すべてのカテゴリーのカテゴリーリストを取得
+	public String items(
+			@RequestParam(name = "categoryId", defaultValue = "") Integer categoryId,
+			Model model) {
+		// すべてのカテゴリーのカテゴリーリストを取得 seq.3
 		List<Category> categoryList = categoryRepository.findAll();
-		// 取得したカテゴリーリストをスコープに登録
+		// 取得したカテゴリーリストをスコープに登録 seq.4
 		model.addAttribute("categoryList", categoryList);
-		// 画面遷移
+		// リクエストパラメータによる商品リスト取得の分岐
+		List<Item> itemList = null;
+		if (categoryId == null) {
+			// カテゴリーIDが未送信の場合 seq.5-1
+			itemList = itemRepository.findAll();
+		} else {
+			// カテゴリーIDが送信されている場合 seq.5-2
+			itemList = itemRepository.findByCategoryId(categoryId);
+		}
+		// 取得した商品リストをスコープに登録 seq.6
+		model.addAttribute("itemList", itemList);
+		// 画面遷移 seq.7
 		return "items";
 	}
 	
