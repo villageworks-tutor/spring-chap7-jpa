@@ -84,15 +84,29 @@ public class ItemController {
 	
 	// 更新画面表示
 	@GetMapping("/items/{id}/edit")
-	public String edit(@PathVariable("id") Integer id) {
-		// 画面遷移
+	public String edit(
+			@PathVariable("id") Integer id,
+			Model model) {
+		// 更新対象商品をデータベースから取得 seq.2
+		Item item = itemRepository.findById(id).get();
+		// 取得した商品をスコープに登録 seq.3
+		model.addAttribute("item", item);
+		// 画面遷移 seq.4
 		return "editItem";
 	}
 	
 	// 更新処理
 	@PostMapping("/items/{id}/edit")
-	public String update(@PathVariable("id") Integer id) {
-		// 画面遷移
+	public String update(
+			@PathVariable("id") Integer id,
+			@RequestParam(name = "categoryId", defaultValue = "") Integer categoryId,
+			@RequestParam(name = "name", defaultValue = "") String name,
+			@RequestParam(name = "price", defaultValue = "") Integer price) {
+		// パスパラメータとリクエストパラメータをもとに更新対象商品をインスタンス化 seq.2
+		Item item = new Item(id, categoryId, name, price);
+		// インスタンス化した商品を永続化 seq.3
+		itemRepository.save(item);
+		// 画面遷移 seq.4
 		return "redirect:/items";
 	}
 	
