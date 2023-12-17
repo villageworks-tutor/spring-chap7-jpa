@@ -18,6 +18,7 @@ import com.example.demo.repository.ItemRepository;
 
 
 
+
 @Controller
 public class ItemController {
 	
@@ -109,5 +110,15 @@ public class ItemController {
 		// 画面遷移 seq.4
 		return "redirect:/items";
 	}
+	
+	// 削除処理
+	@PostMapping("/items/{id}/delete")
+	public String delete(@PathVariable("id") Integer id) {
+		// パスパラメータをもとに商品を削除 seq.2
+		itemRepository.deleteById(id);
+		// 画面遷移 seq.3
+		return "redirect:/items";
+	}
+	
 	
 }
