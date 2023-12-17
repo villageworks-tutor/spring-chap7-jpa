@@ -1,0 +1,91 @@
+@startuml 商品更新
+' skinparam Style strictuml
+' autonumber "0. "
+actor Client
+participant ItemController as itemController
+participant Model as model
+participant ItemRepository as itemRepository
+'participant List as itemList
+participant Item as item
+database spring_sample as db
+
+mainframe 商品更新
+||10||
+== 商品更新画面表示 ==
+||10||
+Client -> itemController: [GET] /items/{id}/edit
+note right
+	コードでは ItemController#edit() メソッドが呼び出される
+end note
+autonumber "0. "
+||10||
+itemController -> itemRepository: @Autowired
+itemController -> itemRepository: findById(id).get()
+note right
+	**［findByIdメソッドに関するメモ］**
+	・CRUD操作に対応するデフォルトで用意されているメソッドはすべてレコードのインス
+	　タンスを要素とするリストを返す。
+	・主キー検索のように要素のインスタンスが高々1個であることがわかっている場合には
+	　引数なしのget()メソッドを呼び出す。
+	・要素のインスタンスが高々1個である場合としては、主キー検索以外では一意性制約が
+	　設定されたフィールドによる検索（uniqueキー検索）がある。
+end note
+||20||
+group springフレームワーク
+	||10||
+	autonumber stop
+	itemRepository -> db: SELECT * items WHERE id = ? 
+	return ResultSet
+	||10||
+	itemRepository -> item: new Item(id, categoryId, name, price)
+	return item
+	||10||
+end
+itemController <-- itemRepository: item
+autonumber resume
+||10||
+itemController -> model: addAttribute("item", item)
+Client <-- itemController: [view] addItem
+||20||
+== 商品更新処理 ==
+||10||
+autonumber stop
+Client -> itemController: [POST] /items/{id}/edit
+note right
+	コードでは ItemController#store(Item) メソッドが呼び出される
+end note
+autonumber "0. "
+||10||
+itemController -> itemRepository: @Autowired
+autonumber stop
+itemController <-- itemRepository: itemRepository
+autonumber resume
+||10||
+itemController -> item: new Item(id, categoryId, name, price)
+autonumber stop
+itemController <-- item: item
+autonumber resume
+||10||
+itemController -> itemRepository: save(item)
+note right
+	**［saveメソッドに関するメモ］**
+	・関連付けられたテーブルの主キーに対応したフィールドがnullでない場合のsaveメソッ
+	　ドでは、主キーを条件としたレコードの更新処理が実行される。
+	・同様にして主キーに対応したフィールドがnullである場合のsaveメソッドでは、新規追
+	　加処理が実行される。
+end note
+||20||
+group springフレームワーク
+	||10||
+	autonumber stop
+	itemRepository -> db: INSERT INTO items (id, category_id, name, price) VALUES (?, ?, ?, ?) 
+	||10||
+end
+||20||
+autonumber resume
+Client <-- itemController: [view] redirect:/items
+note right
+	商品一覧表示のためにリダイレクトする
+end note
+||10||
+@enduml

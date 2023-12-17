@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -13,6 +14,7 @@ import com.example.demo.entity.Category;
 import com.example.demo.entity.Item;
 import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.ItemRepository;
+
 
 
 
@@ -80,5 +82,32 @@ public class ItemController {
 		return "redirect:/items";
 	}
 	
+	// 更新画面表示
+	@GetMapping("/items/{id}/edit")
+	public String edit(
+			@PathVariable("id") Integer id,
+			Model model) {
+		// 更新対象商品をデータベースから取得 seq.2
+		Item item = itemRepository.findById(id).get();
+		// 取得した商品をスコープに登録 seq.3
+		model.addAttribute("item", item);
+		// 画面遷移 seq.4
+		return "editItem";
+	}
+	
+	// 更新処理
+	@PostMapping("/items/{id}/edit")
+	public String update(
+			@PathVariable("id") Integer id,
+			@RequestParam(name = "categoryId", defaultValue = "") Integer categoryId,
+			@RequestParam(name = "name", defaultValue = "") String name,
+			@RequestParam(name = "price", defaultValue = "") Integer price) {
+		// パスパラメータとリクエストパラメータをもとに更新対象商品をインスタンス化 seq.2
+		Item item = new Item(id, categoryId, name, price);
+		// インスタンス化した商品を永続化 seq.3
+		itemRepository.save(item);
+		// 画面遷移 seq.4
+		return "redirect:/items";
+	}
 	
 }

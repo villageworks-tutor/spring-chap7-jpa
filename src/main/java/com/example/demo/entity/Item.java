@@ -33,6 +33,17 @@ public class Item {
 		this.name = name;
 		this.price = price;
 	}
+	/**
+	 * コンストラクタ
+	 * @param id
+	 * @param categoryId
+	 * @param name
+	 * @param price
+	 */
+	public Item(Integer id, Integer categoryId, String name, Integer price) {
+		this(categoryId, name, price);
+		this.id = id;
+	}
 	public Integer getId() {
 		return id;
 	}
