@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -13,6 +14,7 @@ import com.example.demo.entity.Category;
 import com.example.demo.entity.Item;
 import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.ItemRepository;
+
 
 
 
@@ -80,5 +82,18 @@ public class ItemController {
 		return "redirect:/items";
 	}
 	
+	// 更新画面表示
+	@GetMapping("/items/{id}/edit")
+	public String edit(@PathVariable("id") Integer id) {
+		// 画面遷移
+		return "editItem";
+	}
+	
+	// 更新処理
+	@PostMapping("/items/{id}/edit")
+	public String update(@PathVariable("id") Integer id) {
+		// 画面遷移
+		return "redirect:/items";
+	}
 	
 }
