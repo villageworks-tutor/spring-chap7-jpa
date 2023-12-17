@@ -1,0 +1,64 @@
+@startuml 商品削除
+' skinparam Style strictuml
+' autonumber "0. "
+actor Client
+participant ItemController as itemController
+participant Model as model
+participant ItemRepository as itemRepository
+'participant List as itemList
+participant Item as item
+database spring_sample as db
+
+mainframe 商品削除
+== deleteById(id)を使う場合：商品IDがわかっているとき ==
+||10||
+Client -> itemController: [POST] /items/{id}/delete
+autonumber "0. "
+itemController -> itemRepository: @Autowired
+autonumber stop
+itemController <-- itemRepository: itemRepository
+autonumber resume
+||10||
+itemController -> itemRepository: deleteById(id)
+||10||
+autonumber stop
+group springフレームワーク内
+	||10||
+	itemRepository -> db: DELETE FROM items WHERE id = ?
+	note over itemRepository, db
+		プレースホルダ「?」は「id」に置き換えられる
+	end note
+	||10||
+end
+||10||
+autonumber resume
+Client <-- itemController: [view] redirect:/items
+||20||
+
+== delete(Object)メソッドを使う場合：商品インスタンスがわかっているとき ==
+||10||
+autonumber stop
+Client -> itemController: [POST] /items/{id}/delete
+autonumber resume
+itemController -> itemRepository: @Autowired
+autonumber stop
+return itemReporitory
+||10||
+autonumber resume
+autonumber resume
+itemController -> itemRepository: delete(item)
+autonumber stop
+||10||
+group springフレームワーク内
+	||10||
+	itemRepository -> db: DELETE FROM items WHERE id = ?
+	note over itemRepository, db
+		プレースホルダ「?」は「item.id」に置き換えられる
+	end note
+	||10||
+end
+||10||
+autonumber resume
+Client <-- itemController: [view] redirect:/items
+||20||
+@enduml
